@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export FLASK_APP=src/server/main
-export DEBUG=true
+# set .env vars
+export $(echo $(cat ./config/.env | sed 's/#.*//g'| xargs) | envsubst)
 
-flask run --host localhost --port 8080
+docker-compose -f docker-compose.yml -p recipes-information-system up -d --build

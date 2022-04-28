@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app
+    environment:
+      - FLASK_ENV=development
+    env_file:
+      - config/.env
+    ports:
+      - 80:80
+    volumes:
+      - ./src:/src
+    depends_on:
+      - postgres
+    ##command: sh ../wait-to-start.sh
+    networks:
+      - share-network
+  
+  postgres:
+    image: postgres:13-alpine
+    container_name: recipes_postgres
+    environment:
+      POSTGRES_USER: postgres 
+      POSTGRES_PASSWORD: lusm123
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_DB: documents
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/pgdata
+        #- ./config/posts.csv:/var/lib/postgresql/data/posts.csv
+        #- ./.docker/postgres/setup.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - share-network
+
+networks:
+  share-network:
+    driver: bridge
+
+volumes:
+  pgdata:
+  src:
+
